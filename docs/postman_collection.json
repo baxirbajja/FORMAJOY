@@ -1,0 +1,443 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "name": "FormaJOY API",
+    "description": "Collection pour tester l'API FormaJOY",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentification",
+      "item": [
+        {
+          "name": "Inscription",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nom Complet\",\n  \"email\": \"utilisateur@example.com\",\n  \"password\": \"motdepasse123\",\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            },
+            "description": "Créer un nouveau compte utilisateur"
+          }
+        },
+        {
+          "name": "Connexion",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"utilisateur@example.com\",\n  \"password\": \"motdepasse123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Se connecter et obtenir un token JWT"
+          }
+        },
+        {
+          "name": "Profil Utilisateur",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            },
+            "description": "Obtenir le profil de l'utilisateur connecté"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enseignants",
+      "item": [
+        {
+          "name": "Liste des Enseignants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers"]
+            },
+            "description": "Obtenir la liste de tous les enseignants"
+          }
+        },
+        {
+          "name": "Détails d'un Enseignant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/teachers/{{teacherId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers", "{{teacherId}}"]
+            },
+            "description": "Obtenir les détails d'un enseignant spécifique"
+          }
+        },
+        {
+          "name": "Créer un Enseignant",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Nom Enseignant\",\n  \"email\": \"enseignant@example.com\",\n  \"password\": \"motdepasse123\",\n  \"speciality\": \"Informatique\",\n  \"phone\": \"0612345678\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/teachers",
+              "host": ["{{baseUrl}}"],
+              "path": ["teachers"]
+            },
+            "description": "Créer un nouvel enseignant"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Étudiants",
+      "item": [
+        {
+          "name": "Liste des Étudiants",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Obtenir la liste de tous les étudiants"
+          }
+        },
+        {
+          "name": "Inscrire un Étudiant à un Cours",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}/enroll/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}", "enroll", "{{courseId}}"]
+            },
+            "description": "Inscrire un étudiant à un cours spécifique"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cours",
+      "item": [
+        {
+          "name": "Liste des Cours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            },
+            "description": "Obtenir la liste de tous les cours (accès public)"
+          }
+        },
+        {
+          "name": "Détails d'un Cours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/courses/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses", "{{courseId}}"]
+            },
+            "description": "Obtenir les détails d'un cours spécifique (accès public)"
+          }
+        },
+        {
+          "name": "Créer un Cours",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Introduction à la Programmation\",\n  \"description\": \"Cours d'introduction à la programmation\",\n  \"price\": 1500,\n  \"teacher\": \"{{teacherId}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["courses"]
+            },
+            "description": "Créer un nouveau cours (admin uniquement)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "Liste des Sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions"]
+            },
+            "description": "Obtenir la liste de toutes les sessions (accès public)"
+          }
+        },
+        {
+          "name": "Sessions par Cours",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/sessions/course/{{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "course", "{{courseId}}"]
+            },
+            "description": "Obtenir les sessions d'un cours spécifique"
+          }
+        },
+        {
+          "name": "Mettre à jour le Statut d'une Session",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"terminée\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/sessions/{{sessionId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["sessions", "{{sessionId}}", "status"]
+            },
+            "description": "Mettre à jour le statut d'une session (admin, enseignant)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Présences",
+      "item": [
+        {
+          "name": "Présences par Session",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/attendances/session/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendances", "session", "{{sessionId}}"]
+            },
+            "description": "Obtenir les présences d'une session spécifique"
+          }
+        },
+        {
+          "name": "Marquer la Présence",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"session\": \"{{sessionId}}\",\n  \"student\": \"{{studentId}}\",\n  \"status\": \"présent\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendances/mark",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendances", "mark"]
+            },
+            "description": "Marquer la présence d'un étudiant à une session"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Paiements",
+      "item": [
+        {
+          "name": "Paiements par Étudiant",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/payments/student/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "student", "{{studentId}}"]
+            },
+            "description": "Obtenir les paiements d'un étudiant spécifique"
+          }
+        },
+        {
+          "name": "Mettre à jour le Statut d'un Paiement",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"payé\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/payments/{{paymentId}}/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["payments", "{{paymentId}}", "status"]
+            },
+            "description": "Mettre à jour le statut d'un paiement (admin uniquement)"
+          }
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Status code is 200 or 201\", function () {",
+          "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+          "});",
+          "",
+          "if (pm.response.code === 200 || pm.response.code === 201) {",
+          "    var jsonData = pm.response.json();",
+          "    ",
+          "    if (pm.info.requestName === \"Connexion\" && jsonData.token) {",
+          "        pm.environment.set(\"token\", jsonData.token);",
+          "        console.log(\"Token JWT sauvegardé dans la variable d'environnement\");",
+          "    }",
+          "    ",
+          "    if (pm.info.requestName === \"Créer un Enseignant\" && jsonData.data && jsonData.data._id) {",
+          "        pm.environment.set(\"teacherId\", jsonData.data._id);",
+          "        console.log(\"ID de l'enseignant sauvegardé\");",
+          "    }",
+          "    ",
+          "    if (pm.info.requestName === \"Créer un Cours\" && jsonData.data && jsonData.data._id) {",
+          "        pm.environment.set(\"courseId\", jsonData.data._id);",
+          "        console.log(\"ID du cours sauvegardé\");",
+          "    }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    }
+  ]
+}

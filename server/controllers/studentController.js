@@ -1,0 +1,176 @@
+const Student = require('../models/Student');
+
+// @desc    Obtenir tous les étudiants
+// @route   GET /api/students
+// @access  Private/Admin
+exports.getStudents = async (req, res) => {
+  try {
+    const students = await Student.find();
+
+    res.status(200).json({
+      success: true,
+      count: students.length,
+      data: students
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des étudiants:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des étudiants',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Obtenir un étudiant par ID
+// @route   GET /api/students/:id
+// @access  Private
+exports.getStudent = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: student
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération de l\'étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération de l\'étudiant',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Créer un nouvel étudiant
+// @route   POST /api/students
+// @access  Private/Admin
+exports.createStudent = async (req, res) => {
+  try {
+    const student = await Student.create(req.body);
+
+    res.status(201).json({
+      success: true,
+      data: student
+    });
+  } catch (error) {
+    console.error('Erreur lors de la création de l\'étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la création de l\'étudiant',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Mettre à jour un étudiant
+// @route   PUT /api/students/:id
+// @access  Private/Admin
+exports.updateStudent = async (req, res) => {
+  try {
+    let student = await Student.findById(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true
+    });
+
+    res.status(200).json({
+      success: true,
+      data: student
+    });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l\'étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour de l\'étudiant',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Supprimer un étudiant
+// @route   DELETE /api/students/:id
+// @access  Private/Admin
+exports.deleteStudent = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    await student.deleteOne();
+
+    res.status(200).json({
+      success: true,
+      data: {}
+    });
+  } catch (error) {
+    console.error('Erreur lors de la suppression de l\'étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la suppression de l\'étudiant',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Inscrire un étudiant à un cours
+// @route   POST /api/students/:id/enroll/:courseId
+// @access  Private
+exports.enrollCourse = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id);
+    const courseId = req.params.courseId;
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    // Vérifier si l'étudiant est déjà inscrit au cours
+    if (student.cours.includes(courseId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'L\'étudiant est déjà inscrit à ce cours'
+      });
+    }
+
+    // Ajouter le cours à la liste des cours de l'étudiant
+    student.cours.push(courseId);
+    await student.save();
+
+    res.status(200).json({
+      success: true,
+      data: student
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription au cours:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'inscription au cours',
+      error: error.message
+    });
+  }
+};
