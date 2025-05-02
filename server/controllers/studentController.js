@@ -27,7 +27,15 @@ exports.getStudents = async (req, res) => {
 // @access  Private
 exports.getStudent = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
+    const student = await Student.findById(req.params.id)
+      .populate({
+        path: 'cours',
+        select: 'titre description niveau duree prix enseignant',
+        populate: {
+          path: 'enseignant',
+          select: 'nom prenom email specialite telephone'
+        }
+      });
 
     if (!student) {
       return res.status(404).json({
@@ -45,6 +53,51 @@ exports.getStudent = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération de l\'étudiant',
+      error: error.message
+    });
+  }
+};
+
+// @desc    Obtenir le profil d'un étudiant avec ses cours
+// @route   GET /api/participants/student/:id
+// @access  Private
+exports.getStudentProfile = async (req, res) => {
+  try {
+    const student = await Student.findById(req.params.id)
+      .populate({
+        path: 'cours',
+        select: 'titre description niveau duree prix enseignant',
+        populate: {
+          path: 'enseignant',
+          select: 'nom prenom email specialite telephone'
+        }
+      });
+
+    if (!student) {
+      return res.status(404).json({
+        success: false,
+        message: 'Étudiant non trouvé'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: {
+        _id: student._id,
+        nom: student.nom,
+        prenom: student.prenom,
+        email: student.email,
+        telephone: student.telephone,
+        dateNaissance: student.dateNaissance,
+        adresse: student.adresse,
+        cours: student.cours
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération du profil étudiant:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du profil étudiant',
       error: error.message
     });
   }

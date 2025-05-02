@@ -1,12 +1,15 @@
 const express = require('express');
-const { getCourses, getCourse, createCourse, updateCourse, deleteCourse, addStudentToCourse } = require('../controllers/courseController');
+const { getCourses, getCourse, createCourse, updateCourse, deleteCourse, addStudentToCourse, getStudentsByCourse, getCoursesByTeacher, getCoursesByStudent, removeStudentFromCourse } = require('../controllers/courseController');
 const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
 // Routes publiques
 router.get('/', getCourses);
+router.get('/teacher/:id', getCoursesByTeacher);
+router.get('/student/:id', getCoursesByStudent);
 router.get('/:id', getCourse);
+router.get('/:id/students', getStudentsByCourse);
 
 // Routes protégées
 router.use(protect);
@@ -16,7 +19,8 @@ router.post('/', authorize('admin'), createCourse);
 router.put('/:id', authorize('admin'), updateCourse);
 router.delete('/:id', authorize('admin'), deleteCourse);
 
-// Route pour ajouter un étudiant à un cours
-router.post('/:id/enroll', authorize('admin'), addStudentToCourse);
+// Routes pour la gestion des étudiants dans un cours
+router.post('/:id/students', authorize('admin'), addStudentToCourse);
+router.delete('/:id/students/:studentId', authorize('admin'), removeStudentFromCourse);
 
 module.exports = router;

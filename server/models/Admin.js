@@ -2,15 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const StudentSchema = new mongoose.Schema({
+const AdminSchema = new mongoose.Schema({
   nom: {
     type: String,
     required: [true, 'Le nom est requis'],
-    trim: true
-  },
-  prenom: {
-    type: String,
-    required: [true, 'Le prénom est requis'],
     trim: true
   },
   email: {
@@ -30,39 +25,9 @@ const StudentSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'etudiant',
+    default: 'admin',
     immutable: true
   },
-  telephone: {
-    type: String,
-    required: [true, 'Le numéro de téléphone est requis']
-  },
-  adresse: {
-    type: String,
-    required: [true, 'L\'adresse est requise']
-  },
-  dateNaissance: {
-    type: Date,
-    required: [true, 'La date de naissance est requise']
-  },
-  promotionApplicable: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 100
-  },
-  cours: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
-  }],
-  presences: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Attendance'
-  }],
-  paiements: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Payment'
-  }],
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, {
@@ -70,7 +35,7 @@ const StudentSchema = new mongoose.Schema({
 });
 
 // Middleware pour hasher le mot de passe avant l'enregistrement
-StudentSchema.pre('save', async function(next) {
+AdminSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     next();
   }
@@ -81,7 +46,7 @@ StudentSchema.pre('save', async function(next) {
 });
 
 // Méthode pour générer un JWT
-StudentSchema.methods.getSignedJwtToken = function() {
+AdminSchema.methods.getSignedJwtToken = function() {
   return jwt.sign(
     { id: this._id, role: this.role },
     process.env.JWT_SECRET,
@@ -90,8 +55,8 @@ StudentSchema.methods.getSignedJwtToken = function() {
 };
 
 // Méthode pour comparer les mots de passe
-StudentSchema.methods.matchPassword = async function(enteredPassword) {
+AdminSchema.methods.matchPassword = async function(enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model('Student', StudentSchema);
+module.exports = mongoose.model('Admin', AdminSchema);

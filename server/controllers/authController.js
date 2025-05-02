@@ -1,7 +1,53 @@
-const User = require('../models/User');
 const Teacher = require('../models/Teacher');
 const Student = require('../models/Student');
 const Organization = require('../models/Organization');
+const Admin = require('../models/Admin');
+
+// @desc    Inscription d'un administrateur
+// @route   POST /api/auth/register-admin
+// @access  Public
+exports.registerAdmin = async (req, res) => {
+  try {
+    const { nom, prenom, email, password } = req.body;
+
+    // Vérifier si un admin existe déjà
+    const adminExists = await Admin.findOne({ email });
+    if (adminExists) {
+      return res.status(400).json({ success: false, message: 'Un administrateur avec cet email existe déjà' });
+    }
+
+    // Créer l'administrateur
+    const admin = await Admin.create({
+      nom,
+      prenom,
+      email,
+      password,
+      role: 'admin'
+    });
+
+    // Créer un token
+    const token = admin.getSignedJwtToken();
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: {
+        id: admin._id,
+        nom: admin.nom,
+        prenom: admin.prenom,
+        email: admin.email,
+        role: admin.role
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription de l\'administrateur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'inscription de l\'administrateur',
+      error: error.message
+    });
+  }
+};
 
 // @desc    Inscription d'un nouvel utilisateur
 // @route   POST /api/auth/register
@@ -10,9 +56,13 @@ exports.register = async (req, res) => {
   try {
     const { nom, prenom, email, password, role, ...additionalData } = req.body;
 
-    // Vérifier si l'utilisateur existe déjà
-    const userExists = await User.findOne({ email });
-    if (userExists) {
+    // Vérifier si l'utilisateur existe déjà dans n'importe quel modèle
+    const teacherExists = await Teacher.findOne({ email });
+    const studentExists = await Student.findOne({ email });
+    const organizationExists = await Organization.findOne({ email });
+    const adminExists = await Admin.findOne({ email });
+    
+    if (teacherExists || studentExists || organizationExists || adminExists) {
       return res.status(400).json({ success: false, message: 'Cet email est déjà utilisé' });
     }
 
@@ -51,12 +101,9 @@ exports.register = async (req, res) => {
         });
         break;
       default:
-        user = await User.create({
-          nom,
-          prenom,
-          email,
-          password,
-          role: role || 'etudiant'
+        return res.status(400).json({
+          success: false,
+          message: 'Rôle invalide'
         });
     }
 
@@ -99,8 +146,24 @@ exports.login = async (req, res) => {
       });
     }
 
-    // Vérifier si l'utilisateur existe
-    const user = await User.findOne({ email }).select('+password');
+    // Vérifier l'utilisateur dans tous les modèles
+    let user = null;
+    
+    // Chercher dans le modèle Admin
+    user = await Admin.findOne({ email }).select('+password');
+    if (!user) {
+      // Chercher dans le modèle Teacher
+      user = await Teacher.findOne({ email }).select('+password');
+    }
+    if (!user) {
+      // Chercher dans le modèle Student
+      user = await Student.findOne({ email }).select('+password');
+    }
+    if (!user) {
+      // Chercher dans le modèle Organization
+      user = await Organization.findOne({ email }).select('+password');
+    }
+    
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -146,7 +209,26 @@ exports.login = async (req, res) => {
 // @access  Private
 exports.getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id);
+    let user;
+    switch (req.user.role) {
+      case 'admin':
+        user = await Admin.findById(req.user.id);
+        break;
+      case 'enseignant':
+        user = await Teacher.findById(req.user.id);
+        break;
+      case 'etudiant':
+        user = await Student.findById(req.user.id);
+        break;
+      case 'organisation':
+        user = await Organization.findById(req.user.id);
+        break;
+      default:
+        return res.status(400).json({
+          success: false,
+          message: 'Rôle invalide'
+        });
+    }
 
     res.status(200).json({
       success: true,

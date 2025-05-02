@@ -1,46 +1,12 @@
-# Client FormaJOY
+# React + Vite
 
-Interface utilisateur pour le système de gestion FormaJOY.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Installation
+Currently, two official plugins are available:
 
-```bash
-# Installer les dépendances
-npm install
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-# Démarrer le serveur de développement
-npm run dev
+## Expanding the ESLint configuration
 
-# Construire pour la production
-npm run build
-
-# Prévisualiser la version de production
-npm run preview
-```
-
-## Structure du projet
-
-```
-client/
-├── public/              # Fichiers statiques
-├── src/                 # Code source
-│   ├── components/      # Composants réutilisables
-│   ├── pages/           # Pages de l'application
-│   ├── context/         # Contextes React (auth, etc.)
-│   ├── services/        # Services API
-│   ├── utils/           # Utilitaires
-│   ├── App.jsx          # Composant principal
-│   └── main.jsx         # Point d'entrée
-├── index.html           # Page HTML principale
-├── vite.config.js       # Configuration Vite
-└── package.json         # Dépendances et scripts
-```
-
-## Technologies utilisées
-
-- React.js
-- Vite
-- React Router
-- Material-UI
-- Axios
-- JWT pour l'authentification
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

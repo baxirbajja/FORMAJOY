@@ -1,12 +1,32 @@
 const mongoose = require('mongoose');
-const User = require('./User');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
-// Schéma pour les organisations, étend le schéma utilisateur
 const OrganizationSchema = new mongoose.Schema({
   nomOrganisation: {
     type: String,
     required: [true, 'Le nom de l\'organisation est requis'],
     trim: true
+  },
+  email: {
+    type: String,
+    required: [true, 'L\'email est requis'],
+    unique: true,
+    match: [
+      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+      'Veuillez fournir un email valide'
+    ]
+  },
+  password: {
+    type: String,
+    required: [true, 'Le mot de passe est requis'],
+    minlength: 6,
+    select: false
+  },
+  role: {
+    type: String,
+    default: 'organisation',
+    immutable: true
   },
   secteurActivite: {
     type: String,
@@ -49,10 +69,36 @@ const OrganizationSchema = new mongoose.Schema({
   paiements: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Payment'
-  }]
+  }],
+  resetPasswordToken: String,
+  resetPasswordExpire: Date
+}, {
+  timestamps: true
 });
 
-// Création du modèle Organization en utilisant la discrimination
-const Organization = User.discriminator('Organization', OrganizationSchema);
+// Middleware pour hasher le mot de passe avant l'enregistrement
+OrganizationSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    next();
+  }
 
-module.exports = Organization;
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+// Méthode pour générer un JWT
+OrganizationSchema.methods.getSignedJwtToken = function() {
+  return jwt.sign(
+    { id: this._id, role: this.role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRE }
+  );
+};
+
+// Méthode pour comparer les mots de passe
+OrganizationSchema.methods.matchPassword = async function(enteredPassword) {
+  return await bcrypt.compare(enteredPassword, this.password);
+};
+
+module.exports = mongoose.model('Organization', OrganizationSchema);

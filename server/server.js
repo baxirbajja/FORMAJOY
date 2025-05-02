@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 
 // Import des routes
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const teacherRoutes = require('./routes/teacherRoutes');
 const studentRoutes = require('./routes/studentRoutes');
 const courseRoutes = require('./routes/courseRoutes');
@@ -21,7 +22,12 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Message de bienvenue pour tester l'API
@@ -31,6 +37,7 @@ app.get('/', (req, res) => {
 
 // Montage des routes
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/teachers', teacherRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/courses', courseRoutes);
@@ -61,7 +68,7 @@ const connectDB = async () => {
 connectDB();
 
 // Définition du port
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 // Démarrage du serveur
 app.listen(PORT, () => {
