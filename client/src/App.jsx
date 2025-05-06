@@ -7,9 +7,11 @@ import Courses from './pages/Courses';
 import Students from './pages/Students';
 import EditStudent from './pages/EditStudent';
 import Teachers from './pages/Teachers';
+import EditTeacher from './pages/EditTeacher';
 import CourseProfile from './pages/CourseProfile';
 import TeacherProfile from './pages/TeacherProfile';
 import StudentProfile from './pages/StudentProfile';
+import Payments from './pages/Payments';
 import DashboardLayout from './components/DashboardLayout';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -91,6 +93,16 @@ function App() {
             }
           />
           <Route
+            path="/dashboard/teachers/:id/edit"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <EditTeacher />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/user/:id/edit"
             element={
               <PrivateRoute>
@@ -120,6 +132,18 @@ function App() {
               </PrivateRoute>
             }
           />
+           <Route
+            path="/dashboard/payments"
+            element={
+              <PrivateRoute>
+                <DashboardLayout>
+                  <Payments />
+                </DashboardLayout>
+              </PrivateRoute>
+            }
+          />
+        
+        
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </AuthProvider>

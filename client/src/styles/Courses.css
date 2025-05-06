@@ -13,6 +13,19 @@
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .add-course-form {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .add-course-form {
+    padding: 1rem;
+  }
 }
 
 .form-group {
@@ -55,6 +68,18 @@
   align-items: center;
 }
 
+@media (max-width: 768px) {
+  .horaire-group {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .horaire-group {
+    grid-template-columns: 1fr;
+  }
+}
+
 .horaire-group button {
   padding: 0.5rem 1rem;
   background-color: #f44336;
@@ -86,11 +111,14 @@
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-x: auto;
-  width: 90%;
+  width: 100%;
+  max-width: 100%;
 }
 
 table {
   margin-top: 1rem;
+  width: 100%;
+  min-width: 650px;
 }
 
 th, td {
@@ -147,5 +175,30 @@ th {
 
   .action-buttons {
     flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-buttons button {
+    width: 100%;
+    margin: 2px 0;
+  }
+
+  table {
+    min-width: auto;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th, td {
+    min-width: 120px;
+    padding: 8px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px;
+    padding: 8px;
   }
 }

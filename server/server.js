@@ -15,6 +15,7 @@ const sessionRoutes = require('./routes/sessionRoutes');
 const attendanceRoutes = require('./routes/attendanceRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 
+
 // Configuration des variables d'environnement
 dotenv.config();
 
@@ -46,6 +47,7 @@ app.use('/api/participants', participantRoutes);
 app.use('/api/sessions', sessionRoutes);
 app.use('/api/attendances', attendanceRoutes);
 app.use('/api/payments', paymentRoutes);
+
 
 // Connexion à MongoDB
 const connectDB = async () => {

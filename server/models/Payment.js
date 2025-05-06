@@ -1,64 +1,47 @@
 const mongoose = require('mongoose');
 
-// Schéma pour les paiements
 const PaymentSchema = new mongoose.Schema({
-  montant: {
+  // Référence à l'étudiant ou l'enseignant
+  recipient: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    refPath: 'recipientModel'
+  },
+  // Modèle de référence (Student ou Teacher)
+  recipientModel: {
+    type: String,
+    required: true,
+    enum: ['Student', 'Teacher']
+  },
+
+  // Année du paiement
+  year: {
     type: Number,
-    required: [true, 'Le montant du paiement est requis'],
-    min: 0
+    required: [true, 'L\'année est requise']
   },
-  datePaiement: {
-    type: Date,
-    default: Date.now
+  // Mois du paiement
+  month: {
+    type: Number,
+    required: [true, 'Le mois est requis'],
+    min: 1,
+    max: 12
   },
-  methodePaiement: {
+  // Statut du paiement
+  status: {
     type: String,
-    enum: ['espèces', 'chèque', 'virement', 'carte bancaire'],
-    required: [true, 'La méthode de paiement est requise']
-  },
-  referencePaiement: {
-    type: String
-  },
-  statut: {
-    type: String,
-    enum: ['en attente', 'confirmé', 'annulé'],
+    enum: ['en attente', 'payé', 'annulé'],
     default: 'en attente'
   },
-  cours: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course',
-    required: [true, 'Le cours associé est requis']
+  // Date de paiement (quand le statut passe à payé)
+  paymentDate: {
+    type: Date
   },
-  etudiant: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Student'
-  },
-  organisation: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Organization'
-  },
-  enseignant: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Teacher'
-  },
+  // Description ou note sur le paiement
   description: {
     type: String
-  },
-  facture: {
-    numero: String,
-    dateEmission: Date,
-    dateEcheance: Date
   }
 }, {
   timestamps: true
-});
-
-// Validation pour s'assurer qu'un étudiant, une organisation ou un enseignant est spécifié
-PaymentSchema.pre('validate', function(next) {
-  if (!this.etudiant && !this.organisation && !this.enseignant) {
-    this.invalidate('payeur', 'Un étudiant, une organisation ou un enseignant doit être spécifié');
-  }
-  next();
 });
 
 module.exports = mongoose.model('Payment', PaymentSchema);

@@ -138,7 +138,7 @@ exports.updateStudent = async (req, res) => {
       });
     }
 
-    student = await Student.findByIdAndUpdate(req.params.id, req.body, {
+    student = await Student.findOneAndUpdate({ _id: req.params.id }, req.body, {
       new: true,
       runValidators: true
     });
@@ -187,40 +187,65 @@ exports.deleteStudent = async (req, res) => {
   }
 };
 
+const Course = require('../models/Course');
+
 // @desc    Inscrire un étudiant à un cours
 // @route   POST /api/students/:id/enroll/:courseId
 // @access  Private
 exports.enrollCourse = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
-    const courseId = req.params.courseId;
+    const course = await Course.findById(req.params.courseId);
 
-    if (!student) {
+    // Effectuer toutes les validations nécessaires
+    if (!student || !course) {
       return res.status(404).json({
         success: false,
-        message: 'Étudiant non trouvé'
+        message: !student ? 'Étudiant non trouvé' : 'Cours non trouvé'
       });
     }
 
     // Vérifier si l'étudiant est déjà inscrit au cours
-    if (student.cours.includes(courseId)) {
+    const isAlreadyEnrolled = student.cours.some(c => c.course.toString() === req.params.courseId);
+    if (isAlreadyEnrolled) {
       return res.status(400).json({
         success: false,
         message: 'L\'étudiant est déjà inscrit à ce cours'
       });
     }
 
-    // Ajouter le cours à la liste des cours de l'étudiant
-    student.cours.push(courseId);
-    await student.save();
+    // Calculer le prix final en tenant compte de la promotion
+    const prixFinal = course.prix * (1 - student.promotionApplicable / 100);
 
-    res.status(200).json({
+    // Ajouter le cours à la liste des cours de l'étudiant
+    student.cours.push({
+      course: course._id,
+      prix: prixFinal,
+      dateInscription: Date.now()
+    });
+
+    // Mettre à jour le montant total
+    student.montantTotal += prixFinal;
+
+    // Ajouter l'étudiant à la liste des étudiants inscrits du cours
+    course.etudiantsInscrits.push(student._id);
+
+    // Sauvegarder les modifications
+    await Promise.all([student.save(), course.save()]);
+
+    // Envoyer la réponse finale
+    return res.status(200).json({
       success: true,
-      data: student
+      message: 'Inscription au cours réussie',
+      data: {
+        coursId: course._id,
+        prixFinal,
+        dateInscription: new Date()
+      }
     });
   } catch (error) {
     console.error('Erreur lors de l\'inscription au cours:', error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'inscription au cours',
       error: error.message

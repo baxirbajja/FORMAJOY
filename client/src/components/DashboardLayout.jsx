@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useState } from 'react';
 import '../styles/DashboardLayout.css';
 
 export default function DashboardLayout({ children }) {
@@ -16,9 +17,22 @@ export default function DashboardLayout({ children }) {
     return <div>Access Denied</div>;
   }
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <div className="dashboard-layout">
-      <aside className="sidebar">
+      <button className="mobile-menu-toggle" onClick={toggleMenu}>
+        ☰
+      </button>
+      <aside className={`sidebar ${menuOpen ? 'open' : ''}`}>
         <div className="sidebar-header">
           <h2>FormaJOY</h2>
         </div>
@@ -26,27 +40,39 @@ export default function DashboardLayout({ children }) {
           <Link
             to="/dashboard"
             className={`nav-link ${location.pathname === '/dashboard' ? 'active' : ''}`}
+            onClick={closeMenu}
           >
             Gestion des Utilisateurs
           </Link>
           <Link
             to="/dashboard/students"
             className={`nav-link ${location.pathname === '/dashboard/students' ? 'active' : ''}`}
+            onClick={closeMenu}
           >
             Gestion des Étudiants
           </Link>
           <Link
             to="/dashboard/teachers"
             className={`nav-link ${location.pathname === '/dashboard/teachers' ? 'active' : ''}`}
+            onClick={closeMenu}
           >
             Gestion des Enseignants
           </Link>
           <Link
             to="/dashboard/courses"
             className={`nav-link ${location.pathname === '/dashboard/courses' ? 'active' : ''}`}
+            onClick={closeMenu}
           >
             Gestion des Cours
           </Link>
+          <Link
+            to="/dashboard/payments"
+            className={`nav-link ${location.pathname === '/dashboard/payments' ? 'active' : ''}`}
+            onClick={closeMenu}
+          >
+            Gestion des Paiements
+          </Link>
+          
         </nav>
         <div className="sidebar-footer">
           <button onClick={handleLogout} className="logout-btn">

@@ -24,8 +24,6 @@ const TeacherSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Le mot de passe est requis'],
-    minlength: 6,
     select: false
   },
   role: {
@@ -38,8 +36,7 @@ const TeacherSchema = new mongoose.Schema({
     required: [true, 'Le numéro de téléphone est requis']
   },
   adresse: {
-    type: String,
-    required: [true, 'L\'adresse est requise']
+    type: String
   },
   specialite: {
     type: String,
@@ -47,7 +44,6 @@ const TeacherSchema = new mongoose.Schema({
   },
   pourcentageProfit: {
     type: Number,
-    required: [true, 'Le pourcentage de profit est requis'],
     min: 0,
     max: 100
   },
@@ -71,28 +67,29 @@ const TeacherSchema = new mongoose.Schema({
     default: 'actif'
   },
   cours: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course'
+    },
+    prix: {
+      type: Number,
+      required: true
+    },
+    dateAssignation: {
+      type: Date,
+      default: Date.now
+    }
   }],
-  paiements: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Payment'
-  }],
+  salaire: {
+    type: Number,
+    required: [true, 'Le salaire est requis'],
+    min: 0
+  },
+
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, {
   timestamps: true
-});
-
-// Middleware pour hasher le mot de passe avant l'enregistrement
-TeacherSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
-  }
-
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 // Méthode pour générer un JWT

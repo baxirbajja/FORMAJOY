@@ -23,4 +23,7 @@ router.delete('/:id', authorize('admin'), deleteCourse);
 router.post('/:id/students', authorize('admin'), addStudentToCourse);
 router.delete('/:id/students/:studentId', authorize('admin'), removeStudentFromCourse);
 
+// Route pour retirer l'enseignant d'un cours
+
+
 module.exports = router;

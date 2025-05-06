@@ -66,10 +66,7 @@ const OrganizationSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Course'
   }],
-  paiements: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Payment'
-  }],
+
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, {

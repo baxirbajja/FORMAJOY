@@ -88,17 +88,6 @@ export default function EditStudent() {
             </div>
             
             <div className="form-group">
-              <label>Mot de passe:</label>
-              <input
-                type="password"
-                name="password"
-                value={editingStudent.password}
-                onChange={(e) => setEditingStudent({...editingStudent, password: e.target.value})}
-                placeholder="Laisser vide pour garder le mot de passe actuel"
-              />
-            </div>
-
-            <div className="form-group">
               <label>Téléphone:</label>
               <input
                 type="tel"
@@ -125,6 +114,31 @@ export default function EditStudent() {
                 value={editingStudent.dateNaissance ? editingStudent.dateNaissance.split('T')[0] : ''}
                 onChange={(e) => setEditingStudent({...editingStudent, dateNaissance: e.target.value})}
               />
+            </div>
+
+            <div className="form-group">
+              <label>Promotion Applicable (%):</label>
+              <input
+                type="number"
+                name="promotionApplicable"
+                value={editingStudent.promotionApplicable || 0}
+                onChange={(e) => setEditingStudent({...editingStudent, promotionApplicable: Number(e.target.value)})}
+                min="0"
+                max="100"
+              />
+            </div>
+
+            <div className="form-group">
+              <label>Montant Total (DH):</label>
+              <input
+                type="number"
+                name="montantTotal"
+                value={editingStudent.montantTotal || 0}
+                onChange={(e) => setEditingStudent({...editingStudent, montantTotal: Number(e.target.value)})}
+                min="0"
+                disabled
+              />
+              <small>Ce montant est calculé automatiquement à partir des cours inscrits</small>
             </div>
 
             <div className="form-group">

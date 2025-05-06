@@ -1,5 +1,12 @@
 const express = require('express');
-const { getPayments, getPayment, createPayment, updatePayment, deletePayment, getPaymentsByCourse, getPaymentsByStudent, updatePaymentStatus } = require('../controllers/paymentController');
+const { 
+  getPayments, 
+  getPayment, 
+  createPayment, 
+  updatePayment, 
+  deletePayment, 
+  getRecipientPayments 
+} = require('../controllers/paymentController');
 const { protect, authorize } = require('../middleware/auth');
 
 const router = express.Router();
@@ -17,9 +24,7 @@ router.route('/:id')
   .put(authorize('admin'), updatePayment)
   .delete(authorize('admin'), deletePayment);
 
-// Routes spécifiques
-router.get('/course/:courseId', authorize('admin'), getPaymentsByCourse);
-router.get('/student/:studentId', authorize('admin', 'etudiant'), getPaymentsByStudent);
-router.put('/:id/status', authorize('admin'), updatePaymentStatus);
+// Route pour obtenir les paiements d'un destinataire spécifique (étudiant ou enseignant)
+router.get('/recipient/:model/:id', authorize('admin', 'etudiant', 'enseignant'), getRecipientPayments);
 
 module.exports = router;

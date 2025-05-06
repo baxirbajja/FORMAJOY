@@ -10,23 +10,33 @@ export default function Courses() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [teachers, setTeachers] = useState([]);
-  const [editingCourse, setEditingCourse] = useState(null);
-  const [showAddForm, setShowAddForm] = useState(false);
-  const [newCourse, setNewCourse] = useState({
-    nom: '',
-    description: '',
-    prix: '',
-    dureeHeures: '',
-    dateDebut: '',
-    dateFin: '',
-    salle: '',
-    enseignant: '',
-    horaire: [{
-      jour: 'lundi',
-      heureDebut: '',
-      heureFin: ''
-    }]
-  });
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortField, setSortField] = useState('nom');
+  const [sortDirection, setSortDirection] = useState('asc');
+
+  const sortCourses = (coursesList) => {
+    return [...coursesList].sort((a, b) => {
+      let comparison = 0;
+      
+      if (sortField === 'createdAt') {
+        const dateA = new Date(a.createdAt);
+        const dateB = new Date(b.createdAt);
+        comparison = dateA - dateB;
+      } else if (sortField === 'dateDebut' || sortField === 'dateFin') {
+        const dateA = new Date(a[sortField]);
+        const dateB = new Date(b[sortField]);
+        comparison = dateA - dateB;
+      } else if (sortField === 'etudiantsInscrits') {
+        const lengthA = a.etudiantsInscrits?.length || 0;
+        const lengthB = b.etudiantsInscrits?.length || 0;
+        comparison = lengthA - lengthB;
+      } else {
+        comparison = a[sortField].localeCompare(b[sortField]);
+      }
+
+      return sortDirection === 'asc' ? comparison : -comparison;
+    });
+  };
 
   useEffect(() => {
     fetchCourses();
@@ -38,8 +48,9 @@ export default function Courses() {
       const response = await axios.get('/api/courses');
       const coursesData = response.data.data;
       
+      const sortedCoursesData = sortCourses(coursesData);
       const coursesWithTeachers = await Promise.all(
-        coursesData.map(async (course) => {
+        sortedCoursesData.map(async (course) => {
           if (!course.enseignant || typeof course.enseignant !== 'string') {
             return { ...course, enseignantDetails: null };
           }
@@ -77,68 +88,12 @@ export default function Courses() {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNewCourse(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleHoraireChange = (index, field, value) => {
-    setNewCourse(prev => {
-      const newHoraire = [...prev.horaire];
-      newHoraire[index] = { ...newHoraire[index], [field]: value };
-      return { ...prev, horaire: newHoraire };
-    });
-  };
-
-  const addHoraire = () => {
-    setNewCourse(prev => ({
-      ...prev,
-      horaire: [...prev.horaire, { jour: 'lundi', heureDebut: '', heureFin: '' }]
-    }));
-  };
-
-  const removeHoraire = (index) => {
-    setNewCourse(prev => ({
-      ...prev,
-      horaire: prev.horaire.filter((_, i) => i !== index)
-    }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.post('/api/courses', newCourse);
-      toast.success('Cours créé avec succès');
-      setNewCourse({
-        nom: '',
-        description: '',
-        prix: '',
-        dureeHeures: '',
-        dateDebut: '',
-        dateFin: '',
-        salle: '',
-        enseignant: '',
-        horaire: [{ jour: 'lundi', heureDebut: '', heureFin: '' }]
-      });
-      fetchCourses();
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Échec de la création du cours');
-    }
-  };
-
-  const handleEditCourse = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`/api/courses/${editingCourse._id}`, editingCourse);
-      toast.success('Cours mis à jour avec succès');
-      setEditingCourse(null);
-      fetchCourses();
-    } catch (error) {
-      toast.error('Échec de la mise à jour du cours');
-    }
+  const handleSort = (field) => {
+    const direction = sortField === field && sortDirection === 'asc' ? 'desc' : 'asc';
+    setSortField(field);
+    setSortDirection(direction);
+    const sortedCourses = sortCourses(courses);
+    setCourses(sortedCourses);
   };
 
   const handleDeleteCourse = async (courseId) => {
@@ -161,375 +116,54 @@ export default function Courses() {
     <div className="courses-container">
       <h2>Gestion des Cours</h2>
       <div className="courses-content">
-        {!showAddForm && !editingCourse ? (
-          <button 
-            onClick={() => setShowAddForm(true)}
-            className="add-course-btn"
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#4CAF50',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              marginBottom: '20px',
-              width:'fit-content'
-            }}
-          >
-            Ajouter un Nouveau Cours
-          </button>
-        ) : editingCourse ? (
-          <div className="edit-course-form">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-              <h3>Modifier le Cours</h3>
-              <button 
-                onClick={() => setEditingCourse(null)}
-                style={{
-                  padding: '5px 10px',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Fermer
-              </button>
-            </div>
-            <form onSubmit={handleEditCourse}>
-              <div className="form-group">
-                <label>Nom:</label>
-                <input
-                  type="text"
-                  name="nom"
-                  value={editingCourse.nom}
-                  onChange={(e) => setEditingCourse({...editingCourse, nom: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Description:</label>
-                <textarea
-                  name="description"
-                  value={editingCourse.description}
-                  onChange={(e) => setEditingCourse({...editingCourse, description: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Prix:</label>
-                <input
-                  type="number"
-                  name="prix"
-                  value={editingCourse.prix}
-                  onChange={(e) => setEditingCourse({...editingCourse, prix: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Durée (heures):</label>
-                <input
-                  type="number"
-                  name="dureeHeures"
-                  value={editingCourse.dureeHeures}
-                  onChange={(e) => setEditingCourse({...editingCourse, dureeHeures: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Date de début:</label>
-                <input
-                  type="date"
-                  name="dateDebut"
-                  value={editingCourse.dateDebut?.split('T')[0]}
-                  onChange={(e) => setEditingCourse({...editingCourse, dateDebut: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Date de fin:</label>
-                <input
-                  type="date"
-                  name="dateFin"
-                  value={editingCourse.dateFin?.split('T')[0]}
-                  onChange={(e) => setEditingCourse({...editingCourse, dateFin: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Salle:</label>
-                <input
-                  type="text"
-                  name="salle"
-                  value={editingCourse.salle}
-                  onChange={(e) => setEditingCourse({...editingCourse, salle: e.target.value})}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Enseignant:</label>
-                <select
-                  name="enseignant"
-                  value={editingCourse.enseignant}
-                  onChange={(e) => setEditingCourse({...editingCourse, enseignant: e.target.value})}
-                  required
-                >
-                  <option value="">Sélectionner un enseignant</option>
-                  {teachers.map(teacher => (
-                    <option key={teacher._id} value={teacher._id}>
-                      {teacher.nom} {teacher.prenom}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="horaires-section">
-                <h4>Horaires</h4>
-                {editingCourse.horaire.map((horaire, index) => (
-                  <div key={index} className="horaire-group">
-                    <select
-                      value={horaire.jour}
-                      onChange={(e) => {
-                        const newHoraire = [...editingCourse.horaire];
-                        newHoraire[index] = { ...newHoraire[index], jour: e.target.value };
-                        setEditingCourse({...editingCourse, horaire: newHoraire});
-                      }}
-                    >
-                      {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(jour => (
-                        <option key={jour} value={jour}>{jour.charAt(0).toUpperCase() + jour.slice(1)}</option>
-                      ))}
-                    </select>
-                    <input
-                      type="time"
-                      value={horaire.heureDebut}
-                      onChange={(e) => {
-                        const newHoraire = [...editingCourse.horaire];
-                        newHoraire[index] = { ...newHoraire[index], heureDebut: e.target.value };
-                        setEditingCourse({...editingCourse, horaire: newHoraire});
-                      }}
-                    />
-                    <input
-                      type="time"
-                      value={horaire.heureFin}
-                      onChange={(e) => {
-                        const newHoraire = [...editingCourse.horaire];
-                        newHoraire[index] = { ...newHoraire[index], heureFin: e.target.value };
-                        setEditingCourse({...editingCourse, horaire: newHoraire});
-                      }}
-                    />
-                    {editingCourse.horaire.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          const newHoraire = editingCourse.horaire.filter((_, i) => i !== index);
-                          setEditingCourse({...editingCourse, horaire: newHoraire});
-                        }}
-                      >
-                        Supprimer
-                      </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newHoraire = [...editingCourse.horaire, { jour: 'lundi', heureDebut: '', heureFin: '' }];
-                    setEditingCourse({...editingCourse, horaire: newHoraire});
-                  }}
-                >
-                  Ajouter un horaire
-                </button>
-              </div>
-
-              <div className="button-group">
-                <button type="submit" className="submit-btn">Mettre à jour</button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setEditingCourse(null)}
-                >
-                  Annuler
-                </button>
-              </div>
-            </form>
-          </div>
-        ) : (
-          <div className="add-course-form">
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-              <h3>Ajouter un Nouveau Cours</h3>
-              <button 
-                onClick={() => setShowAddForm(false)}
-                style={{
-                  padding: '5px 10px',
-                  backgroundColor: '#f44336',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}
-              >
-                Fermer
-              </button>
-            </div>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Nom:</label>
-              <input
-                type="text"
-                name="nom"
-                value={newCourse.nom}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Description:</label>
-              <textarea
-                name="description"
-                value={newCourse.description}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Prix:</label>
-              <input
-                type="number"
-                name="prix"
-                value={newCourse.prix}
-                onChange={handleInputChange}
-                required
-                min="0"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Durée (heures):</label>
-              <input
-                type="number"
-                name="dureeHeures"
-                value={newCourse.dureeHeures}
-                onChange={handleInputChange}
-                required
-                min="1"
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Date de début:</label>
-              <input
-                type="date"
-                name="dateDebut"
-                value={newCourse.dateDebut}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Date de fin:</label>
-              <input
-                type="date"
-                name="dateFin"
-                value={newCourse.dateFin}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Salle:</label>
-              <input
-                type="text"
-                name="salle"
-                value={newCourse.salle}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Enseignant:</label>
-              <select
-                name="enseignant"
-                value={newCourse.enseignant}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Sélectionner un enseignant</option>
-                {teachers.map((teacher) => (
-                  <option key={teacher._id} value={teacher._id}>
-                    {teacher.nom} {teacher.prenom}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="horaire-section">
-              <h4>Horaires</h4>
-              {newCourse.horaire.map((horaire, index) => (
-                <div key={index} className="horaire-group">
-                  <select
-                    value={horaire.jour}
-                    onChange={(e) => handleHoraireChange(index, 'jour', e.target.value)}
-                  >
-                    {['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'].map(jour => (
-                      <option key={jour} value={jour}>{jour}</option>
-                    ))}
-                  </select>
-                  <input
-                    type="time"
-                    value={horaire.heureDebut}
-                    onChange={(e) => handleHoraireChange(index, 'heureDebut', e.target.value)}
-                    required
-                  />
-                  <input
-                    type="time"
-                    value={horaire.heureFin}
-                    onChange={(e) => handleHoraireChange(index, 'heureFin', e.target.value)}
-                    required
-                  />
-                  {index > 0 && (
-                    <button type="button" onClick={() => removeHoraire(index)}>Supprimer</button>
-                  )}
-                </div>
-              ))}
-              <button type="button" onClick={addHoraire}>Ajouter un horaire</button>
-            </div>
-
-            <button type="submit" className="submit-btn">Ajouter le Cours</button>
-          </form>
+        <button 
+          onClick={() => navigate('/dashboard/courses/new')}
+          className="add-course-btn"
+          style={{
+            padding: '10px 15px',
+            backgroundColor: '#4CAF50',
+            color: 'white',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            marginBottom: '20px',
+            width: 'fit-content',
+            maxHeight:'60px'
+          }}
+        >
+          Ajouter un Nouveau Cours
+        </button>
+        <div className="search-sort-container">
+          <input
+            type="text"
+            placeholder="Rechercher un cours..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
         </div>
-        )
-        }
-          <table>
-            <thead>
-              <tr>
-                <th>Nom</th>
-                <th>Nombre d'étudiants</th>
-                <th>Prix</th>
-                <th>Durée</th>
-                <th>Date de début</th>
-                <th>Date de fin</th>
-                <th>Salle</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {courses.map(course => (
+        <table>
+          <thead>
+            <tr>
+              <th onClick={() => handleSort('nom')}>Nom {sortField === 'nom' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('etudiantsInscrits')}>Nombre d'étudiants {sortField === 'etudiantsInscrits' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('dureeHeures')}>Durée {sortField === 'dureeHeures' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('dateDebut')}>Date de début {sortField === 'dateDebut' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('dateFin')}>Date de fin {sortField === 'dateFin' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th onClick={() => handleSort('salle')}>Salle {sortField === 'salle' ? (sortDirection === 'asc' ? '↑' : '↓') : ''}</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses
+              .filter(course => 
+                course.nom.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                course.description.toLowerCase().includes(searchTerm.toLowerCase())
+              )
+              .map(course => (
                 <tr key={course._id}>
                   <td>{course.nom}</td>
                   <td>{course.etudiantsInscrits?.length || 0}</td>
-                  <td>{course.prix} MAD</td>
                   <td>{course.dureeHeures}h</td>
                   <td>{new Date(course.dateDebut).toLocaleDateString()}</td>
                   <td>{new Date(course.dateFin).toLocaleDateString()}</td>
@@ -556,9 +190,9 @@ export default function Courses() {
                   </td>
                 </tr>
               ))}
-            </tbody>
-          </table>
-        </div>
+          </tbody>
+        </table>
       </div>
+    </div>
   );
 }

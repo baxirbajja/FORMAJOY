@@ -24,8 +24,6 @@ const StudentSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Le mot de passe est requis'],
-    minlength: 6,
     select: false
   },
   role: {
@@ -52,33 +50,70 @@ const StudentSchema = new mongoose.Schema({
     max: 100
   },
   cours: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Course'
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Course'
+    },
+    prix: {
+      type: Number,
+      required: true
+    },
+    dateInscription: {
+      type: Date,
+      default: Date.now
+    }
   }],
+  montantTotal: {
+    type: Number,
+    default: 0
+  },
   presences: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Attendance'
   }],
-  paiements: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Payment'
-  }],
+
+
+
   resetPasswordToken: String,
   resetPasswordExpire: Date
 }, {
   timestamps: true
 });
 
-// Middleware pour hasher le mot de passe avant l'enregistrement
-StudentSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) {
-    next();
+// Fonction pour calculer le montant total avec promotion
+const calculerMontantTotal = function(cours, promotionApplicable) {
+  if (cours && cours.length > 0) {
+    return cours.reduce((total, cours) => {
+      const prixAvecPromotion = cours.prix * (1 - promotionApplicable / 100);
+      return total + prixAvecPromotion;
+    }, 0);
   }
+  return 0;
+};
 
-  const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+// Middleware pour calculer le montant total avec promotion avant la sauvegarde
+StudentSchema.pre('save', function(next) {
+  this.montantTotal = calculerMontantTotal(this.cours, this.promotionApplicable);
   next();
 });
+
+// Middleware pour calculer le montant total avec promotion avant la mise à jour
+StudentSchema.pre('findOneAndUpdate', async function(next) {
+  const update = this.getUpdate();
+  if (update.promotionApplicable !== undefined || update.cours !== undefined) {
+    const doc = await this.model.findOne(this.getQuery());
+    if (!doc) return next();
+    
+    const cours = update.cours || doc.cours;
+    const promotionApplicable = update.promotionApplicable || doc.promotionApplicable;
+    update.montantTotal = calculerMontantTotal(cours, promotionApplicable);
+  }
+  next();
+});
+
+
+
+
 
 // Méthode pour générer un JWT
 StudentSchema.methods.getSignedJwtToken = function() {

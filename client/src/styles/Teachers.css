@@ -131,7 +131,36 @@ th {
     grid-template-columns: 1fr;
   }
 
+  .add-teacher-form {
+    padding: 1rem;
+  }
+
   .action-buttons {
     flex-direction: column;
+    gap: 4px;
+  }
+
+  .action-buttons button {
+    width: 100%;
+    margin: 2px 0;
+  }
+
+  table {
+    min-width: auto;
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  th, td {
+    min-width: 120px;
+    padding: 8px;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    font-size: 14px;
+    padding: 8px;
   }
 }

@@ -1,256 +1,249 @@
-# Spécifications du Projet FormaJOY
+# FormaJOY Project Specifications
 
-## 1. Vue d'ensemble
+## 1. Overview
 
-FormaJOY est un système de gestion complet pour centres de formation, disponible en version web (MERN stack) et mobile. Le système permet la gestion des enseignants, des cours, des étudiants, des présences et des paiements.
+FormaJOY is a comprehensive management system for training centers, available in both web (MERN stack) and mobile versions. The system enables management of teachers, courses, students, attendance, and payments.
 
-## 2. Utilisateurs et Rôles
+## 2. Users and Roles
 
-### Administrateur
-- Gestion complète des enseignants (ajout, modification, suppression)
-- Création et configuration des cours
-- Enregistrement des étudiants et des organisations
-- Application des promotions/réductions
-- Suivi des présences
-- Gestion des paiements aux enseignants
-- Attribution des identifiants de connexion
+### Administrator
+- Complete teacher management (add, modify, delete)
+- Course creation and configuration
+- Student and organization registration
+- Application of promotions/discounts
+- Attendance tracking
+- Teacher payment management
+- Login credentials assignment
 
-### Enseignant
-- Consultation de son profil
-- Visualisation des cours assignés
-- Consultation de son historique de paiements
-- Confirmation des paiements reçus
+### Teacher
+- Profile consultation
+- View assigned courses
+- Payment history consultation
+- Payment confirmation
 
-### Étudiant
-- Consultation de son profil
-- Visualisation des cours auxquels il est inscrit
+### Student
+- Profile consultation
+- View enrolled courses
 
-### Organisation
-- Consultation de son profil
-- Gestion des participants
-- Visualisation des cours auxquels elle est inscrite
-- Consultation de son historique de paiements
+### Organization
+- Profile consultation
+- Participant management
+- View enrolled courses
+- Payment history consultation
 
-## 3. Modèles de Données
+## 3. Data Models
 
-### Utilisateur
-- ID
-- Nom
-- Prénom
-- Email
-- Mot de passe (hashé)
-- Rôle (Admin, Enseignant, Étudiant, Organisation)
-- Date de création
 
-### Enseignant (étend Utilisateur)
-- Téléphone
-- Adresse
-- Spécialité
-- Pourcentage de profit
-- Heures disponibles
-- Sessions par semaine
-- Statut (actif/inactif)
 
-### Étudiant (étend Utilisateur)
-- Téléphone
-- Adresse
-- Date de naissance
-- Promotion applicable (pourcentage)
+### Teacher (extends User)
+- Phone
+- Address
+- Specialty
+- Profit percentage
+- Available hours
+- Sessions per week
+- Status (active/inactive)
 
-### Organisation (étend Utilisateur)
-- Nom de l'organisation
-- Secteur d'activité
-- Téléphone
-- Adresse
-- Personne de contact
-- Email de contact
-- Promotion applicable (pourcentage)
-- Liste des participants (références)
+### Student (extends User)
+- Phone
+- Address
+- Date of birth
+- Applicable promotion (percentage)
+
+### Organization (extends User)
+- Organization name
+- Business sector
+- Phone
+- Address
+- Contact person
+- Contact email
+- Applicable promotion (percentage)
+- Participant list (references)
 
 ### Participant
 - ID
-- Organisation (référence)
-- Nom
-- Prénom
+- Organization (reference)
+- First Name
+- Last Name
 - Email
-- Téléphone
-- Poste/Fonction
-- Cours inscrits (références)
+- Phone
+- Position/Function
+- Enrolled courses (references)
 
-### Cours
+### Course
 - ID
-- Nom
+- Name
 - Description
-- Prix
-- Prix spécial organisation
-- Durée totale (heures)
-- Date de début
-- Date de fin
-- Horaire (jours et heures)
-- Salle
-- Enseignant assigné (référence)
-- Statut (planifié, en cours, terminé)
-- Liste des étudiants inscrits (références)
-- Liste des organisations inscrites (références)
-- Liste des participants inscrits (références)
+- Price
+- Special organization price
+- Total duration (hours)
+- Start date
+- End date
+- Schedule (days and hours)
+- Room
+- Assigned teacher (reference)
+- Status (planned, in progress, completed)
+- Enrolled students list (references)
+- Enrolled organizations list (references)
+- Enrolled participants list (references)
 
 ### Session
 - ID
-- Cours (référence)
+- Course (reference)
 - Date
-- Heure de début
-- Heure de fin
-- Statut (planifiée, complétée, annulée)
+- Start time
+- End time
+- Status (planned, completed, cancelled)
 
-### Présence
+### Attendance
 - ID
-- Session (référence)
-- Étudiant/Participant (référence)
-- Type (étudiant individuel, participant d'organisation)
-- Statut (présent, absent, retard)
-- Commentaire
+- Session (reference)
+- Student/Participant (reference)
+- Type (individual student, organization participant)
+- Status (present, absent, late)
+- Comment
 
-### Paiement
+### Payment
 - ID
-- Type (enseignant, organisation)
-- Référence (enseignant ou organisation)
-- Montant
-- Mois concerné
-- Date de paiement
-- Statut (en attente, confirmé)
-- Méthode de paiement
-- Facture (référence)
+- Type (teacher, organization)
+- Reference (teacher or organization)
+- Amount
+- Month concerned
+- Payment date
+- Status (pending, confirmed)
+- Payment method
+- Invoice (reference)
 
-## 4. Fonctionnalités Détaillées
+## 4. Detailed Features
 
-### Gestion des Enseignants
-- Enregistrement avec informations personnelles et professionnelles
-- Configuration du contrat (pourcentage, sessions, heures)
-- Suivi des cours assignés
-- Calcul automatique des paiements mensuels
-- Système de confirmation de paiement
+### Teacher Management
+- Registration with personal and professional information
+- Contract configuration (percentage, sessions, hours)
+- Assigned courses tracking
+- Automatic monthly payment calculation
+- Payment confirmation system
 
-### Gestion des Cours
-- Création avec paramètres complets
-- Attribution des salles et enseignants
-- Planification des sessions
-- Suivi des inscriptions (étudiants individuels et organisations)
-- Gestion du statut du cours
-- Tarification spéciale pour les organisations
+### Course Management
+- Creation with complete parameters
+- Room and teacher assignment
+- Session planning
+- Registration tracking (individual students and organizations)
+- Course status management
+- Special pricing for organizations
 
-### Gestion des Étudiants
-- Enregistrement complet
-- Inscription aux cours
-- Application de promotions personnalisées
-- Suivi des paiements
+### Student Management
+- Complete registration
+- Course enrollment
+- Custom promotion application
+- Payment tracking
 
-### Gestion des Organisations
-- Enregistrement complet avec informations de l'entreprise
-- Gestion des participants (ajout, modification, suppression)
-- Inscription des participants aux cours
-- Application de tarifs spéciaux et promotions
-- Facturation et suivi des paiements
+### Organization Management
+- Complete registration with company information
+- Participant management (add, modify, delete)
+- Course enrollment for participants
+- Special rates and promotions application
+- Billing and payment tracking
 
-### Suivi des Présences
-- Enregistrement pour chaque session (étudiants et participants d'organisations)
-- Visualisation des absences
-- Rapports de présence par organisation
+### Attendance Tracking
+- Recording for each session (students and organization participants)
+- Absence visualization
+- Organization attendance reports
 
-### Gestion Financière
-- Calcul des revenus par cours
-- Calcul des paiements aux enseignants
-- Facturation des organisations
-- Suivi des confirmations de paiement
-- Rapports financiers détaillés par type de client (individuel/organisation)
+### Financial Management
+- Course revenue calculation
+- Teacher payment calculation
+- Organization billing
+- Payment confirmation tracking
+- Detailed financial reports by client type (individual/organization)
 
-## 5. Interfaces Utilisateur
+## 5. User Interfaces
 
-### Version Web
-- Interface d'administration complète
-- Tableaux de bord spécifiques par rôle
-- Formulaires de gestion
-- Rapports et statistiques
+### Web Version
+- Complete administration interface
+- Role-specific dashboards
+- Management forms
+- Reports and statistics
 - Responsive design
 
-### Version Mobile
-- Fonctionnalités essentielles adaptées au mobile
-- Interface simplifiée
-- Notifications push
+### Mobile Version
+- Essential features adapted for mobile
+- Simplified interface
+- Push notifications
 
-## 6. API RESTful
+## 6. RESTful API
 
-L'API sera structurée autour des ressources principales :
-- /api/auth - Authentification
-- /api/users - Gestion des utilisateurs
-- /api/teachers - Gestion des enseignants
-- /api/students - Gestion des étudiants
-- /api/organizations - Gestion des organisations
-- /api/participants - Gestion des participants d'organisations
-- /api/courses - Gestion des cours
-- /api/sessions - Gestion des sessions
-- /api/attendance - Gestion des présences
-- /api/payments - Gestion des paiements
-- /api/invoices - Gestion des factures
+The API will be structured around main resources:
+- /api/auth - Authentication
+- /api/users - User management
+- /api/teachers - Teacher management
+- /api/students - Student management
+- /api/organizations - Organization management
+- /api/participants - Organization participant management
+- /api/courses - Course management
+- /api/sessions - Session management
+- /api/attendance - Attendance management
+- /api/payments - Payment management
+- /api/invoices - Invoice management
 
-## 7. Sécurité
+## 7. Security
 
-- Authentification JWT
-- Hashage des mots de passe
-- Contrôle d'accès basé sur les rôles
-- Validation des données
-- Protection contre les attaques courantes (XSS, CSRF)
+- JWT Authentication
+- Password hashing
+- Role-based access control
+- Data validation
+- Protection against common attacks (XSS, CSRF)
 
-## 8. Étapes de Développement
+## 8. Development Phases
 
-### Phase 1: Préparation et Configuration
-- Mise en place de l'environnement de développement
-- Configuration des dépendances
-- Création des modèles de données
+### Phase 1: Preparation and Setup
+- Development environment setup
+- Dependencies configuration
+- Data model creation
 
-### Phase 2: Développement Backend
-- Implémentation de l'API RESTful
-- Mise en place de l'authentification
-- Développement des fonctionnalités principales
+### Phase 2: Backend Development
+- RESTful API implementation
+- Authentication setup
+- Core feature development
 
-### Phase 3: Développement Frontend Web
-- Création des interfaces utilisateur
-- Intégration avec l'API
-- Tests d'utilisabilité
+### Phase 3: Web Frontend Development
+- User interface creation
+- API integration
+- Usability testing
 
-### Phase 4: Développement Mobile
-- Adaptation des fonctionnalités pour mobile
-- Développement de l'interface mobile
-- Synchronisation avec le backend
+### Phase 4: Mobile Development
+- Feature adaptation for mobile
+- Mobile interface development
+- Backend synchronization
 
-### Phase 5: Tests et Déploiement
-- Tests d'intégration
-- Correction des bugs
-- Déploiement de la version initiale
+### Phase 5: Testing and Deployment
+- Integration testing
+- Bug fixing
+- Initial version deployment
 
-## 9. Technologies Recommandées
+## 9. Recommended Technologies
 
-### Frontend Web
+### Web Frontend
 - React.js
-- Redux pour la gestion d'état
-- Material-UI pour les composants
-- Axios pour les requêtes HTTP
-- Chart.js pour les visualisations
+- Redux for state management
+- Material-UI for components
+- Axios for HTTP requests
+- Chart.js for visualizations
 
 ### Backend
-- Node.js avec Express
-- MongoDB avec Mongoose
-- JWT pour l'authentification
-- Bcrypt pour le hashage
-- Multer pour la gestion des fichiers
+- Node.js with Express
+- MongoDB with Mongoose
+- JWT for authentication
+- Bcrypt for hashing
+- Multer for file management
 
 ### Mobile
 - Flutter
-- Provider/Bloc pour la gestion d'état
+- Provider/Bloc for state management
 - Flutter Navigation
-- Dio pour les requêtes HTTP
-- SharedPreferences pour le stockage local
+- Dio for HTTP requests
+- SharedPreferences for local storage
 
-## 10.  pour la Collaboration
+## 10. Collaboration Guidelines
 
-- Utiliser Git pour le contrôle de version
-- Documenter l'API pour faciliter l'intégration mobile
+- Use Git for version control
+- Document API to facilitate mobile integration
