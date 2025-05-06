@@ -1,0 +1,225 @@
+/* Responsive Design pour FormaJOY */
+
+/* Variables globales pour les breakpoints */
+:root {
+  --breakpoint-sm: 576px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 992px;
+  --breakpoint-xl: 1200px;
+}
+
+/* Styles généraux pour tous les appareils mobiles */
+@media (max-width: 991px) {
+  /* Ajustements de la taille des textes */
+  h1 {
+    font-size: 2.5em;
+  }
+  h2 {
+    font-size: 2em;
+  }
+  h3 {
+    font-size: 1.75em;
+  }
+
+  /* Ajustements des boutons pour une meilleure expérience tactile */
+  button, .btn, .login-button, .submit-btn, .logout-btn {
+    padding: 0.75rem 1rem;
+    min-height: 44px; /* Taille minimale pour les éléments tactiles */
+  }
+
+  /* Ajustements des formulaires */
+  input, select, textarea {
+    font-size: 16px; /* Évite le zoom automatique sur iOS */
+    padding: 0.75rem;
+  }
+
+  /* Espacement général */
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+}
+
+/* Tablettes et petits écrans */
+@media (max-width: 768px) {
+  /* Layout du dashboard */
+  .dashboard-container {
+    padding: 1rem;
+  }
+
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  /* Tables responsives */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 600px;
+  }
+
+  /* Formulaires */
+  .add-student-form,
+  .add-teacher-form,
+  .edit-user-form {
+    padding: 1rem;
+  }
+
+  .form-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Boutons d'action */
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .action-buttons button {
+    width: 100%;
+  }
+
+  /* Modales */
+  .modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .search-sort-section {
+    flex-direction: column;
+  }
+
+  .sort-controls {
+    width: 100%;
+  }
+
+  .sort-select {
+    flex: 1;
+  }
+
+  /* Student Profile */
+  .student-profile {
+    padding: 1rem;
+  }
+
+  .student-content {
+    grid-template-columns: 1fr;
+  }
+
+  .course-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  /* Teachers Page */
+  .teachers-content {
+    grid-template-columns: 1fr;
+  }
+
+  .teachers-list {
+    padding: 1rem;
+  }
+
+  }
+
+  .dashboard-main {
+    padding: 1rem;
+  }
+
+  /* Ajustements des tableaux */
+  .courses-list, .students-list, .teachers-list, .payments-list {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 650px;
+  }
+
+  /* Formulaires */
+  .add-course-form, .add-student-form, .add-teacher-form {
+    padding: 1.5rem;
+  }
+
+  .horaire-group {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  /* Login */
+  .login-card {
+    padding: 2rem 1.5rem;
+  }
+
+
+/* Smartphones */
+@media (max-width: 576px) {
+  /* Ajustements du texte */
+  h1 {
+    font-size: 2em;
+  }
+  h2 {
+    font-size: 1.75em;
+  }
+  h3 {
+    font-size: 1.5em;
+  }
+
+  /* Layout */
+  .dashboard-main {
+    padding: 0.75rem;
+  }
+
+  /* Navigation */
+  .sidebar-nav {
+    overflow-x: auto;
+    justify-content: flex-start;
+    padding-bottom: 0.5rem;
+  }
+
+  .nav-link {
+    white-space: nowrap;
+  }
+
+  /* Formulaires */
+  .form-group label {
+    margin-bottom: 0.3rem;
+  }
+
+  /* Profils */
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-actions {
+    margin-top: 1rem;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* Cards et conteneurs */
+  .card, .info-card {
+    padding: 1rem;
+  }
+
+  /* Login */
+  .login-wrapper {
+    padding: 0.5rem;
+  }
+
+  .login-card {
+    padding: 1.5rem 1rem;
+    border-radius: 1rem;
+  }
+
+  .login-title {
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+  }
+}
