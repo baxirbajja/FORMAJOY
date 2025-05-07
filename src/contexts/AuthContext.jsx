@@ -2,8 +2,11 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Configure axios defaults
-axios.defaults.baseURL = 'http://localhost:5050';
+axios.defaults.baseURL = 'https://formajoyapi-production.up.railway.app';
 axios.defaults.withCredentials = true;
+axios.defaults.headers.common['Accept'] = 'application/json';
+axios.defaults.headers.common['Content-Type'] = 'application/json';
+axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
 
 const AuthContext = createContext();
 
