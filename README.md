@@ -1,72 +1,12 @@
-# FormaJOY - Système de Gestion pour Centre de Formation
+# React + Vite
 
-FormaJOY est une application de gestion complète pour les centres de formation, disponible en version web (MERN stack) et mobile. Le système prend en charge à la fois les inscriptions individuelles d'étudiants et les inscriptions d'organisations avec plusieurs participants.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Fonctionnalités Principales
+Currently, two official plugins are available:
 
-### Gestion des Enseignants
-- Enregistrement des enseignants avec leurs informations personnelles
-- Gestion des contrats (pourcentage de profit, nombre de sessions, heures)
-- Profil enseignant pour visualiser les cours assignés
-- Système de confirmation de paiement
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### Gestion des Cours
-- Création et configuration des cours (nom, prix, durée, horaire)
-- Attribution des salles et des enseignants
-- Suivi des inscriptions
+## Expanding the ESLint configuration
 
-### Gestion des Étudiants
-- Enregistrement des étudiants
-- Inscription aux cours
-- Système de promotion/réduction
-- Profil étudiant pour visualiser les cours suivis
-
-### Gestion des Organisations
-- Enregistrement des organisations avec leurs informations
-- Gestion des participants (ajout, modification, suppression)
-- Inscription des participants aux cours
-- Tarification spéciale et système de facturation
-- Profil organisation pour gérer les participants et visualiser les cours
-
-### Suivi des Présences
-- Enregistrement des présences pour chaque session
-- Rapports de présence
-
-### Gestion Financière
-- Calcul automatique des paiements mensuels aux enseignants
-- Suivi des paiements et confirmations
-
-## Architecture du Projet
-
-### Version Web (MERN Stack)
-- **Frontend**: React.js avec Material-UI
-- **Backend**: Node.js avec Express
-- **Base de données**: MongoDB
-- **Authentication**: JWT
-
-### Version Mobile
-- **Framework**: React Native
-- **API**: Partage de l'API backend avec la version web
-
-## Structure du Projet
-
-```
-FORMAJOY/
-├── client/                 # Frontend React
-├── server/                 # Backend Node.js/Express
-├── mobile/                 # Application mobile React Native
-└── docs/                   # Documentation
-```
-
-## Démarrage du Développement
-
-1. Définir les modèles de données
-2. Développer l'API RESTful
-3. Créer les interfaces utilisateur web
-4. Développer l'application mobile
-5. Implémenter les tests
-6. Déployer l'application
-
-## Collaboration
-
-Ce projet est développé en collaboration entre développeurs web et mobile.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
